@@ -77,8 +77,8 @@
 
     // Function to calculate typing speed and accuracy
     function endTest() {
-        const textToType = document.getElementById("text-to-type").innerText;
-        const userInput = document.getElementById("user-input").value;
+        const textToType = document.getElementById("text-to-type").innerText.trim().toLowerCase();
+        const userInput = document.getElementById("user-input").value.trim().toLowerCase();
         const endTime = new Date().getTime();
         const timeTaken = (endTime - startTime) / 1000; // time in seconds
 
