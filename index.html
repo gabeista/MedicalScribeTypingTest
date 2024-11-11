@@ -34,7 +34,7 @@
             border-radius: 5px;
             resize: vertical;
         }
-        .results {
+        .results, .stopwatch {
             margin-top: 20px;
         }
     </style>
@@ -48,6 +48,11 @@
         Patient is a 52-year-old male presenting with intermittent chest pain over the last two days. The pain is described as sharp, localized to the left side of the chest, and occasionally radiates to the left shoulder. He denies shortness of breath, dizziness, and sweating. No previous history of cardiac issues. Vital signs are stable, and physical examination reveals no abnormalities.
     </div>
 
+    <!-- Stopwatch display -->
+    <div class="stopwatch">
+        <strong>Time Elapsed: <span id="stopwatch">0:00</span></strong>
+    </div>
+
     <textarea id="user-input" class="user-input" placeholder="Type the passage here..." onfocus="startTimer()" spellcheck="false" autocorrect="off" autocapitalize="off"></textarea>
     <br>
     <button onclick="endTest()">Finish Test</button>
@@ -57,12 +62,27 @@
 
 <script>
     let startTime;
+    let stopwatchInterval;
 
-    // Start timer when the user starts typing
+    // Start timer and stopwatch when the user starts typing
     function startTimer() {
         if (!startTime) {
             startTime = new Date().getTime();
+            // Start the stopwatch
+            stopwatchInterval = setInterval(updateStopwatch, 1000);
         }
+    }
+
+    // Update the stopwatch display every second
+    function updateStopwatch() {
+        const currentTime = new Date().getTime();
+        const elapsedTime = Math.floor((currentTime - startTime) / 1000); // elapsed time in seconds
+
+        const minutes = Math.floor(elapsedTime / 60);
+        const seconds = elapsedTime % 60;
+
+        // Display in "minutes:seconds" format
+        document.getElementById("stopwatch").textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
     }
 
     // Prevent copying and pasting
@@ -77,22 +97,30 @@
 
     // Function to calculate typing speed and accuracy
     function endTest() {
+        // Stop the stopwatch
+        clearInterval(stopwatchInterval);
+
         const textToType = document.getElementById("text-to-type").innerText.trim().toLowerCase();
         const userInput = document.getElementById("user-input").value.trim().toLowerCase();
         const endTime = new Date().getTime();
         const timeTaken = (endTime - startTime) / 1000; // time in seconds
 
         // Calculate Words Per Minute (WPM)
-        const wordsTyped = userInput.trim().split(/\s+/).length;
+        const wordsTyped = userInput.split(/\s+/).length;
         const wordsPerMinute = (wordsTyped / timeTaken) * 60;
 
-        // Calculate accuracy
-        let correctChars = 0;
-        const length = Math.min(userInput.length, textToType.length);
-        for (let i = 0; i < length; i++) {
-            if (userInput[i] === textToType[i]) correctChars++;
+        // Calculate accuracy by comparing word-by-word
+        const referenceWords = textToType.split(/\s+/);
+        const inputWords = userInput.split(/\s+/);
+        let correctWords = 0;
+
+        // Compare each word in user input to reference words
+        for (let i = 0; i < inputWords.length; i++) {
+            if (inputWords[i] === referenceWords[i]) correctWords++;
         }
-        const accuracy = (correctChars / textToType.length) * 100;
+
+        // Calculate accuracy as the percentage of correctly typed words
+        const accuracy = (correctWords / referenceWords.length) * 100;
 
         // Display results
         document.getElementById("result").innerHTML = `
