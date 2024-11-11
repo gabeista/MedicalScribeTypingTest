@@ -65,6 +65,16 @@
         }
     }
 
+    // Prevent copying and pasting
+    document.getElementById("user-input").addEventListener("copy", function(e) {
+        e.preventDefault();
+        alert("Copying is disabled for this test.");
+    });
+    document.getElementById("user-input").addEventListener("paste", function(e) {
+        e.preventDefault();
+        alert("Pasting is disabled for this test.");
+    });
+
     // Function to calculate typing speed and accuracy
     function endTest() {
         const textToType = document.getElementById("text-to-type").innerText;
