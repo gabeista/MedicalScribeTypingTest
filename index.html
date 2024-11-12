@@ -53,7 +53,9 @@
         <strong>Time Elapsed: <span id="stopwatch">0:00</span></strong>
     </div>
 
-    <textarea id="user-input" class="user-input" placeholder="Type the passage here..." onfocus="startTimer()" spellcheck="false" autocorrect="off" autocapitalize="off"></textarea>
+    <!-- Typing area with Grammarly, spellcheck, and autocorrect disabled -->
+    <textarea id="user-input" class="user-input" placeholder="Type the passage here..." 
+              onfocus="startTimer()" spellcheck="false" autocorrect="off" autocapitalize="off" data-gramm="false"></textarea>
     <br>
     <button onclick="endTest()">Finish Test</button>
 
@@ -106,20 +108,21 @@
         const timeTaken = (endTime - startTime) / 1000; // time in seconds
 
         // Calculate Words Per Minute (WPM)
-        const wordsTyped = userInput.split(/\s+/).length;
-        const wordsPerMinute = (wordsTyped / timeTaken) * 60;
+        const totalCharsTyped = userInput.length;
+        const wordsPerMinute = (totalCharsTyped / 5) / (timeTaken / 60);
 
         // Calculate accuracy by comparing word-by-word
         const referenceWords = textToType.split(/\s+/);
         const inputWords = userInput.split(/\s+/);
         let correctWords = 0;
 
-        // Compare each word in user input to reference words
-        for (let i = 0; i < inputWords.length; i++) {
+        // Compare words within the bounds of the shorter text
+        const maxWords = Math.min(referenceWords.length, inputWords.length);
+        for (let i = 0; i < maxWords; i++) {
             if (inputWords[i] === referenceWords[i]) correctWords++;
         }
 
-        // Calculate accuracy as the percentage of correctly typed words
+        // Calculate accuracy based on reference text word count
         const accuracy = (correctWords / referenceWords.length) * 100;
 
         // Display results
