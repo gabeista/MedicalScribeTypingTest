@@ -75,6 +75,7 @@
 <script>
     let startTime;
     let stopwatchInterval;
+    let currentTest = "Medical Scribe Typing Test 1"; // Default to Test 1
 
     // Test passages
     const passages = {
@@ -84,6 +85,7 @@
 
     // Load selected test passage
     function loadTest(testType) {
+        currentTest = testType === "general" ? "Medical Scribe Typing Test 1" : "Medical Scribe Typing Test 2";
         document.getElementById("text-to-type").textContent = passages[testType];
         document.getElementById("user-input").value = ""; // Clear the input box
         document.getElementById("stopwatch").textContent = "0:00"; // Reset stopwatch
@@ -154,6 +156,7 @@
         // Display results
         document.getElementById("result").innerHTML = `
             <strong>Results:</strong><br>
+            Typing Test Completed: ${currentTest}<br>
             Time Taken: ${timeTaken.toFixed(2)} seconds<br>
             Words Per Minute (WPM): ${wordsPerMinute.toFixed(2)}<br>
             Accuracy: ${accuracy.toFixed(2)}%<br>
