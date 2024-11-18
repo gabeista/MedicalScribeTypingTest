@@ -42,7 +42,17 @@
 <body>
 
 <div class="typing-test-container">
-    <h3>Typing Test</h3>
+    <h3>Medical Scribe Typing Tests</h3>
+    <p>Select a test:</p>
+    <label>
+        <input type="radio" name="test-option" value="general" onclick="loadTest('general')" checked>
+        Medical Scribe Typing Test 1
+    </label>
+    <label>
+        <input type="radio" name="test-option" value="medical" onclick="loadTest('medical')">
+        Medical Scribe Typing Test 2
+    </label>
+
     <p>Type the following passage accurately in the box below and click "Finish Test" to see your results:</p>
     <div class="passage" id="text-to-type">
         Patient is a 52-year-old male presenting with intermittent chest pain over the last two days. The pain is described as sharp, localized to the left side of the chest, and occasionally radiates to the left shoulder. He denies shortness of breath, dizziness, and sweating. No previous history of cardiac issues. Vital signs are stable, and physical examination reveals no abnormalities.
@@ -65,6 +75,22 @@
 <script>
     let startTime;
     let stopwatchInterval;
+
+    // Test passages
+    const passages = {
+        general: "Patient is a 52-year-old male presenting with intermittent chest pain over the last two days. The pain is described as sharp, localized to the left side of the chest, and occasionally radiates to the left shoulder. He denies shortness of breath, dizziness, and sweating. No previous history of cardiac issues. Vital signs are stable, and physical examination reveals no abnormalities.",
+        medical: "The patient was prescribed amoxicillin and metformin. Recent lab results show an elevated HbA1c of 8.5% and a decreased eGFR of 45 mL/min/1.73m². Recommended tests include CBC, BMP, and LFTs to monitor liver function and kidney status. Continue monitoring with follow-up in 3 months."
+    };
+
+    // Load selected test passage
+    function loadTest(testType) {
+        document.getElementById("text-to-type").textContent = passages[testType];
+        document.getElementById("user-input").value = ""; // Clear the input box
+        document.getElementById("stopwatch").textContent = "0:00"; // Reset stopwatch
+        document.getElementById("result").innerHTML = ""; // Clear results
+        startTime = null; // Reset timer
+        clearInterval(stopwatchInterval); // Stop the stopwatch
+    }
 
     // Start timer and stopwatch when the user starts typing
     function startTimer() {
