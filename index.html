@@ -151,8 +151,8 @@
             }
         }
 
-        // Accuracy calculation: correct words vs total words typed
-        const accuracy = (correctWords / inputWords.length) * 100;
+        // Accuracy calculation: correct words vs total words in reference text
+        const accuracy = (correctWords / referenceWords.length) * 100;
 
         // Display results
         document.getElementById("result").innerHTML = `
