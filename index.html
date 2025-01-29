@@ -19,7 +19,7 @@
         function loadTest(testType) {
             currentTest = testType === "general" ? "Medical Scribe Typing Test 1" : "Medical Scribe Typing Test 2";
             document.getElementById("text-to-type").textContent = passages[testType];
-            document.getElementById("user-input").value = ""; // Clear the input box
+            document.getElementById("user-input").value = ""; // Clear input
             document.getElementById("stopwatch").textContent = "0:00"; // Reset stopwatch
         }
 
@@ -50,13 +50,6 @@
 
             // Calculate accuracy
             const accuracy = calculateAccuracy(originalText, userTypedText);
-
-            // Debugging Output
-            console.log("Original Text:", originalText);
-            console.log("User Typed Text:", userTypedText);
-            console.log("Time Taken:", timeTaken.toFixed(2), "seconds");
-            console.log("Words Per Minute (WPM):", wordsPerMinute.toFixed(2));
-            console.log("Accuracy:", accuracy.toFixed(2), "%");
 
             // Display results
             document.getElementById("result").innerHTML = `
@@ -92,7 +85,7 @@
     <button onclick="loadTest('medical')">Test 2</button>
 
     <p id="text-to-type">Click a button to load a test passage.</p>
-    <textarea id="user-input" placeholder="Start typing here..." onfocus="startStopwatch()"></textarea>
+    <textarea id="user-input" placeholder="Start typing here..." onfocus="startStopwatch()" rows="6" cols="80"></textarea>
 
     <p>Time: <span id="stopwatch">0:00</span></p>
     <button onclick="stopTest()">Submit</button>
