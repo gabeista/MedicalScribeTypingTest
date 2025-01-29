@@ -3,168 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Typing Test</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
+    <title>Medical Scribe Typing Test</title>
+    <script>
+        let startTime;
+        let stopwatchInterval;
+        let currentTest = "Medical Scribe Typing Test 1"; // Default to Test 1
+
+        // Test passages
+        const passages = {
+            general: "The patient is a 45-year-old male presenting with chest pain...",
+            medical: "A 32-year-old female presents with acute abdominal pain and nausea..."
+        };
+
+        // Load selected test passage
+        function loadTest(testType) {
+            currentTest = testType === "general" ? "Medical Scribe Typing Test 1" : "Medical Scribe Typing Test 2";
+            document.getElementById("text-to-type").textContent = passages[testType];
+            document.getElementById("user-input").value = ""; // Clear the input box
+            document.getElementById("stopwatch").textContent = "0:00"; // Reset stopwatch
         }
-        .typing-test-container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background-color: #f9f9f9;
+
+        // Start timing
+        function startStopwatch() {
+            startTime = new Date();
+            stopwatchInterval = setInterval(updateStopwatch, 1000);
         }
-        .passage {
-            font-size: 16px;
-            line-height: 1.6;
-            margin-bottom: 20px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            background-color: #fff;
-            border-radius: 5px;
+
+        function updateStopwatch() {
+            const elapsedTime = Math.floor((new Date() - startTime) / 1000);
+            document.getElementById("stopwatch").textContent = `${Math.floor(elapsedTime / 60)}:${elapsedTime % 60}`;
         }
-        .user-input {
-            width: 100%;
-            height: 150px;
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            resize: vertical;
+
+        function stopTest() {
+            clearInterval(stopwatchInterval);
+
+            const originalText = document.getElementById("text-to-type").textContent.trim();
+            let userTypedText = document.getElementById("user-input").value.trim();
+
+            // Ensure same length for comparison
+            userTypedText = userTypedText.substring(0, originalText.length);
+
+            // Calculate time taken
+            const timeTaken = (new Date() - startTime) / 1000;
+            const wordsTyped = userTypedText.split(/\s+/).length;
+            const wordsPerMinute = (wordsTyped / timeTaken) * 60;
+
+            // Calculate accuracy
+            const accuracy = calculateAccuracy(originalText, userTypedText);
+
+            // Debugging Output
+            console.log("Original Text:", originalText);
+            console.log("User Typed Text:", userTypedText);
+            console.log("Time Taken:", timeTaken.toFixed(2), "seconds");
+            console.log("Words Per Minute (WPM):", wordsPerMinute.toFixed(2));
+            console.log("Accuracy:", accuracy.toFixed(2), "%");
+
+            // Display results
+            document.getElementById("result").innerHTML = `
+                <strong>Results:</strong><br>
+                Typing Test Completed: ${currentTest}<br>
+                Time Taken: ${timeTaken.toFixed(2)} seconds<br>
+                Words Per Minute (WPM): ${wordsPerMinute.toFixed(2)}<br>
+                Accuracy: ${accuracy.toFixed(2)}%<br>
+                <strong>Feedback:</strong><br>
+                Aim for at least 95% accuracy to ensure accurate documentation.
+            `;
         }
-        .results, .stopwatch {
-            margin-top: 20px;
+
+        function calculateAccuracy(originalText, userTypedText) {
+            let correctChars = 0;
+            let totalChars = userTypedText.length;
+
+            for (let i = 0; i < totalChars; i++) {
+                if (userTypedText[i] === originalText[i]) {
+                    correctChars++;
+                }
+            }
+
+            return (correctChars / totalChars) * 100;
         }
-    </style>
+    </script>
 </head>
 <body>
 
-<div class="typing-test-container">
-    <h3>Medical Scribe Typing Tests</h3>
+    <h2>Medical Scribe Typing Test</h2>
     <p>Select a test:</p>
-    <label>
-        <input type="radio" name="test-option" value="general" onclick="loadTest('general')" checked>
-        Medical Scribe Typing Test 1
-    </label>
-    <label>
-        <input type="radio" name="test-option" value="medical" onclick="loadTest('medical')">
-        Medical Scribe Typing Test 2
-    </label>
+    <button onclick="loadTest('general')">Test 1</button>
+    <button onclick="loadTest('medical')">Test 2</button>
 
-    <p>Type the following passage accurately in the box below and click "Finish Test" to see your results:</p>
-    <div class="passage" id="text-to-type">
-        Patient is a 52-year-old male presenting with intermittent chest pain over the last two days. The pain is described as sharp, localized to the left side of the chest, and occasionally radiates to the left shoulder. He denies shortness of breath, dizziness, and sweating. No previous history of cardiac issues. Vital signs are stable, and physical examination reveals no abnormalities.
-    </div>
+    <p id="text-to-type">Click a button to load a test passage.</p>
+    <textarea id="user-input" placeholder="Start typing here..." onfocus="startStopwatch()"></textarea>
 
-    <!-- Stopwatch display -->
-    <div class="stopwatch">
-        <strong>Time Elapsed: <span id="stopwatch">0:00</span></strong>
-    </div>
+    <p>Time: <span id="stopwatch">0:00</span></p>
+    <button onclick="stopTest()">Submit</button>
 
-    <!-- Typing area with Grammarly, spellcheck, and autocorrect disabled -->
-    <textarea id="user-input" class="user-input" placeholder="Type the passage here..." 
-              onfocus="startTimer()" spellcheck="false" autocorrect="off" autocapitalize="off" data-gramm="false"></textarea>
-    <br>
-    <button onclick="endTest()">Finish Test</button>
-
-    <div id="result" class="results"></div>
-</div>
-
-<script>
-    let startTime;
-    let stopwatchInterval;
-    let currentTest = "Medical Scribe Typing Test 1"; // Default to Test 1
-
-    // Test passages
-    const passages = {
-        general: "Patient is a 52-year-old male presenting with intermittent chest pain over the last two days. The pain is described as sharp, localized to the left side of the chest, and occasionally radiates to the left shoulder. He denies shortness of breath, dizziness, and sweating. No previous history of cardiac issues. Vital signs are stable, and physical examination reveals no abnormalities.",
-        medical: "The patient was prescribed amoxicillin and metformin. Recent lab results show a urinalysis positive for E. coli, elevated HbA1c of 8.5% and a fasting blood glucose level of 241. Recommended tests include CBC, BMP, and LFTs to monitor liver function and kidney status. Continue monitoring with follow-up in 3 months."
-    };
-
-    // Load selected test passage
-    function loadTest(testType) {
-        currentTest = testType === "general" ? "Medical Scribe Typing Test 1" : "Medical Scribe Typing Test 2";
-        document.getElementById("text-to-type").textContent = passages[testType];
-        document.getElementById("user-input").value = ""; // Clear the input box
-        document.getElementById("stopwatch").textContent = "0:00"; // Reset stopwatch
-        document.getElementById("result").innerHTML = ""; // Clear results
-        startTime = null; // Reset timer
-        clearInterval(stopwatchInterval); // Stop the stopwatch
-    }
-
-    // Start timer and stopwatch when the user starts typing
-    function startTimer() {
-        if (!startTime) {
-            startTime = new Date().getTime();
-            // Start the stopwatch
-            stopwatchInterval = setInterval(updateStopwatch, 1000);
-        }
-    }
-
-    // Update the stopwatch display every second
-    function updateStopwatch() {
-        const currentTime = new Date().getTime();
-        const elapsedTime = Math.floor((currentTime - startTime) / 1000); // elapsed time in seconds
-
-        const minutes = Math.floor(elapsedTime / 60);
-        const seconds = elapsedTime % 60;
-
-        // Display in "minutes:seconds" format
-        document.getElementById("stopwatch").textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-    }
-
-    // Prevent copying and pasting
-    document.getElementById("user-input").addEventListener("copy", function(e) {
-        e.preventDefault();
-        alert("Copying is disabled for this test.");
-    });
-    document.getElementById("user-input").addEventListener("paste", function(e) {
-        e.preventDefault();
-        alert("Pasting is disabled for this test.");
-    });
-
-    // Function to calculate typing speed and accuracy
-    function endTest() {
-        // Stop the stopwatch
-        clearInterval(stopwatchInterval);
-
-        const textToType = document.getElementById("text-to-type").innerText.trim().toLowerCase();
-        const userInput = document.getElementById("user-input").value.trim().toLowerCase();
-        const endTime = new Date().getTime();
-        const timeTaken = (endTime - startTime) / 1000; // time in seconds
-
-        // Calculate Words Per Minute (WPM)
-        const totalCharsTyped = userInput.length;
-        const wordsPerMinute = (totalCharsTyped / 5) / (timeTaken / 60);
-
-        // Calculate accuracy by comparing word-by-word
-        const referenceWords = textToType.split(/\s+/);
-        const inputWords = userInput.split(/\s+/);
-        let correctWords = 0;
-
-        // Compare words within the bounds of the shorter text
-        const maxWords = Math.min(referenceWords.length, inputWords.length);
-        for (let i = 0; i < maxWords; i++) {
-            if (inputWords[i] === referenceWords[i]) correctWords++;
-        }
-
-        // Calculate accuracy based on reference text word count
-        const accuracy = (correctWords / referenceWords.length) * 100;
-
-        // Display results
-        document.getElementById("result").innerHTML = `
-            <strong>Results:</strong><br>
-            Typing Test Completed: ${currentTest}<br>
-            Time Taken: ${timeTaken.toFixed(2)} seconds<br>
-            Words Per Minute (WPM): ${wordsPerMinute.toFixed(2)}<br>
-            Accuracy: ${accuracy.toFixed(2)}%<br>
-            <strong>Feedback:</strong><br>
-            Aim for at least 95% accuracy to ensure accurate documentation.
-        `;
-    }
-</script>
+    <div id="result"></div>
 
 </body>
 </html>
