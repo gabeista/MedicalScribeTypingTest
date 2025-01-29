@@ -75,7 +75,7 @@
 <script>
     let startTime;
     let stopwatchInterval;
-    let currentTest = "Medical Scribe Typing Test 1"; // Default to Test 1
+    let currentTest = "Medical Scribe Typing Test 1"; // Default test name
 
     // Test passages
     const passages = {
@@ -139,19 +139,20 @@
         const totalCharsTyped = userInput.length;
         const wordsPerMinute = (totalCharsTyped / 5) / (timeTaken / 60);
 
-        // Calculate accuracy by comparing word-by-word
+        // Split words for accuracy calculation
         const referenceWords = textToType.split(/\s+/);
         const inputWords = userInput.split(/\s+/);
         let correctWords = 0;
 
-        // Compare words within the bounds of the shorter text
-        const maxWords = Math.min(referenceWords.length, inputWords.length);
-        for (let i = 0; i < maxWords; i++) {
-            if (inputWords[i] === referenceWords[i]) correctWords++;
+        // Compare words one by one
+        for (let i = 0; i < Math.min(referenceWords.length, inputWords.length); i++) {
+            if (inputWords[i] === referenceWords[i]) {
+                correctWords++;
+            }
         }
 
-        // Calculate accuracy based on reference text word count
-        const accuracy = (correctWords / referenceWords.length) * 100;
+        // Accuracy calculation: correct words vs total words typed
+        const accuracy = (correctWords / inputWords.length) * 100;
 
         // Display results
         document.getElementById("result").innerHTML = `
