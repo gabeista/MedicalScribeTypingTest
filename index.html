@@ -126,13 +126,14 @@
         const timeTaken = (endTime - startTime) / 1000; // time in seconds
 
         // Split words for accuracy calculation
-        const referenceWords = textToType.split(/\s+/);
-        const inputWords = userInput.split(/\s+/);
+        const referenceWords = textToType.split(/\s+/).map(word => word.trim());
+        const inputWords = userInput.split(/\s+/).map(word => word.trim());
 
         // Count correct words
         let correctWords = 0;
+        const totalWords = referenceWords.length;
         for (let i = 0; i < referenceWords.length; i++) {
-            if (referenceWords[i] === inputWords[i]) {
+            if (inputWords[i] === referenceWords[i]) {
                 correctWords++;
             }
         }
@@ -142,7 +143,7 @@
         const wordsPerMinute = (totalCharsTyped / 5) / (timeTaken / 60);
 
         // Accuracy calculation: correct words vs total words in reference text
-        const accuracy = (correctWords / referenceWords.length) * 100;
+        const accuracy = (correctWords / totalWords) * 100;
 
         // Display results
         document.getElementById("result").innerHTML = `
