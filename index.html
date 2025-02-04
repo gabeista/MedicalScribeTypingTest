@@ -115,41 +115,31 @@
         document.getElementById("stopwatch").textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
     }
 
-    // Prevent copying and pasting
-    document.getElementById("user-input").addEventListener("copy", function(e) {
-        e.preventDefault();
-        alert("Copying is disabled for this test.");
-    });
-    document.getElementById("user-input").addEventListener("paste", function(e) {
-        e.preventDefault();
-        alert("Pasting is disabled for this test.");
-    });
-
     // Function to calculate typing speed and accuracy
     function endTest() {
         // Stop the stopwatch
         clearInterval(stopwatchInterval);
 
-        const textToType = document.getElementById("text-to-type").innerText.trim().toLowerCase();
-        const userInput = document.getElementById("user-input").value.trim().toLowerCase();
+        const textToType = document.getElementById("text-to-type").innerText.trim();
+        const userInput = document.getElementById("user-input").value.trim();
         const endTime = new Date().getTime();
         const timeTaken = (endTime - startTime) / 1000; // time in seconds
-
-        // Calculate Words Per Minute (WPM)
-        const totalCharsTyped = userInput.length;
-        const wordsPerMinute = (totalCharsTyped / 5) / (timeTaken / 60);
 
         // Split words for accuracy calculation
         const referenceWords = textToType.split(/\s+/);
         const inputWords = userInput.split(/\s+/);
-        let correctWords = 0;
 
-        // Compare words one by one
-        for (let i = 0; i < Math.min(referenceWords.length, inputWords.length); i++) {
-            if (inputWords[i] === referenceWords[i]) {
+        // Count correct words
+        let correctWords = 0;
+        for (let i = 0; i < referenceWords.length; i++) {
+            if (referenceWords[i] === inputWords[i]) {
                 correctWords++;
             }
         }
+
+        // Calculate Words Per Minute (WPM)
+        const totalCharsTyped = userInput.length;
+        const wordsPerMinute = (totalCharsTyped / 5) / (timeTaken / 60);
 
         // Accuracy calculation: correct words vs total words in reference text
         const accuracy = (correctWords / referenceWords.length) * 100;
