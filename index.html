@@ -126,14 +126,15 @@
         const timeTaken = (endTime - startTime) / 1000; // time in seconds
 
         // Split words for accuracy calculation
-        const referenceWords = textToType.split(/\s+/).map(word => word.trim());
-        const inputWords = userInput.split(/\s+/).map(word => word.trim());
+        const referenceWords = textToType.split(/\s+/);
+        const inputWords = userInput.split(/\s+/);
 
         // Count correct words
         let correctWords = 0;
         const totalWords = referenceWords.length;
-        for (let i = 0; i < referenceWords.length; i++) {
-            if (inputWords[i] === referenceWords[i]) {
+
+        for (let i = 0; i < inputWords.length; i++) {
+            if (referenceWords[i] && inputWords[i] === referenceWords[i]) {
                 correctWords++;
             }
         }
